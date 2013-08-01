@@ -238,5 +238,5 @@ void CCButtonLayer::MoveHeroBegin(float t)
 /************************************************************************/
 void CCButtonLayer::MoveHeroEnd(CCNode * sender)
 {
-
+	//精灵移动停止后操作
 }
