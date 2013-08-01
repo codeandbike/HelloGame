@@ -13,8 +13,8 @@ public:
 
 
 public:
-	virtual bool init(const char *path,CCArray * arrPosition);//初始化主角
-	static CCLead * create(const char *path,CCArray * arrPosition); 
+	virtual bool init(const char *path,int Arr[][2],int n);//初始化主角
+	static CCLead * create(const char *path,int Arr[][2],int n); 
 
 };
 

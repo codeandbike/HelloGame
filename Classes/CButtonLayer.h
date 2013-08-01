@@ -5,6 +5,7 @@
 #include "SimpleAudioEngine.h"
 #include "cocos-ext.h" 
 #include "COperateScene.h"
+#include <list>
 
 using namespace cocos2d;
 USING_NS_CC_EXT;  
@@ -19,6 +20,7 @@ public:
 	cocos2d::CCMoveBy *m_pMove;
 	CCOperateScene * pGameLayer;
 	int dirTag; //移动方向
+	static const int MoveLength = 2; //移动量
 	enum direction{
 		kUp,
 		kDown,
@@ -26,6 +28,9 @@ public:
 		kRight
 	};
 
+	//int yellow_arr[][2];
+
+	list<CCPoint> yellow_wall;
 public:
 	virtual bool init();
 	static CCButtonLayer * create();
@@ -41,7 +46,7 @@ public:
 	void touchDragInsideLeft2(CCObject* pSender, CCControlEvent event);	
 	void touchDragInsideRight2(CCObject* pSender, CCControlEvent event);
 
-	void update(float dt); //检测碰撞
+	void update(CCRect leadRect); //检测碰撞
 
 	/************************************************************************/
 	/* 精灵移动 开始                                                                    */

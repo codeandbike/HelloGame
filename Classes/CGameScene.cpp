@@ -1,4 +1,5 @@
 #include "CGameScene.h"
+#include <list>
 
 using namespace cocos2d;
 CCGameScene::CCGameScene(void)
@@ -26,9 +27,13 @@ bool CCGameScene::init() //初始化函数
 
 		//加载游戏操作层
 
-		this->m_pGameLayer = CCOperateScene::create();
-		CC_BREAK_IF(!m_pGameLayer);
-		this->addChild(m_pGameLayer);
+// 		this->m_pGameLayer = CCOperateScene::create();
+// 		CC_BREAK_IF(!m_pGameLayer);
+// 		this->addChild(m_pGameLayer);
+		int yellowArr[5][2] = {{1,0},{2,0},{3,0},{4,0},{5,0}};
+		this->m_wall = CCLead::create("yellow.png",yellowArr,5);
+		this->addChild(m_wall);
+		
 
 		//添加主角
 		this->m_pLead = CCSprite::create("Lead.PNG");
@@ -42,6 +47,15 @@ bool CCGameScene::init() //初始化函数
 		m_pButton->pGameLayer = m_pGameLayer;
 		//this->m_pGameLayer->m_pSprite = m_pLead;
 		this->addChild(m_pButton);
+
+		list<CCPoint> temp;
+		for (int i=0; i<5;i++)
+		{
+			CCPoint position = ccp((yellowArr[i][0]*10)+5,(yellowArr[i][1]*10)+150+5);
+			temp.push_back(position);
+		}
+		m_pButton->yellow_wall = temp;
+		
 
 		//退出按钮
 		CCMenuItemImage *pCloseItem = CCMenuItemImage::create(

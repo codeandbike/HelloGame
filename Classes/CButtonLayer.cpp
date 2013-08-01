@@ -21,6 +21,8 @@ bool CCButtonLayer::init()
 
 		this->m_pMove = CCMoveBy::create(0,ccp(0,0));
 
+		//初始化墙体位置
+
 		//加载向上按钮
 		CCScale9Sprite *btnNormal = CCScale9Sprite::create("up2.png");
 		CCScale9Sprite *btnSelected = CCScale9Sprite::create("up1.png");
@@ -104,7 +106,7 @@ void CCButtonLayer::touchDragInsideUp(CCObject* pSender, CCControlEvent event)
 // 	this->m_pLead->runAction(m_pMove);
 	
 	dirTag = kUp;
-	this->schedule(schedule_selector(CCButtonLayer::MoveHeroBegin),0.01);
+	this->schedule(schedule_selector(CCButtonLayer::MoveHeroBegin),0.01f);
 
 
 }
@@ -120,7 +122,7 @@ void CCButtonLayer::touchDragInsideDown(CCObject* pSender, CCControlEvent event)
 // 	this->m_pLead->runAction(m_pMove);
 
 	dirTag = kDown;
-	this->schedule(schedule_selector(CCButtonLayer::MoveHeroBegin),0.01);
+	this->schedule(schedule_selector(CCButtonLayer::MoveHeroBegin),0.01f);
 	
 }
 void CCButtonLayer::touchDragInsideLeft(CCObject* pSender, CCControlEvent event)
@@ -134,7 +136,7 @@ void CCButtonLayer::touchDragInsideLeft(CCObject* pSender, CCControlEvent event)
 // 
 // 	this->m_pLead->runAction(m_pMove);
 	dirTag = kLeft;
-	this->schedule(schedule_selector(CCButtonLayer::MoveHeroBegin),0.01);
+	this->schedule(schedule_selector(CCButtonLayer::MoveHeroBegin),0.01f);
 
 
 }
@@ -149,7 +151,7 @@ void CCButtonLayer::touchDragInsideRight(CCObject* pSender, CCControlEvent event
 // 
 // 	this->m_pLead->runAction(m_pMove);
 	dirTag = kRight;
-	this->schedule(schedule_selector(CCButtonLayer::MoveHeroBegin),0.01);
+	this->schedule(schedule_selector(CCButtonLayer::MoveHeroBegin),0.01f);
 	
 }
 
@@ -183,25 +185,39 @@ void CCButtonLayer::touchDragInsideRight2(CCObject* pSender, CCControlEvent even
 }
 
 
-void CCButtonLayer::update(float dt) //检测碰撞
+void CCButtonLayer::update(CCRect leadRect) //检测碰撞
 {
 // 	CCObject* it;
-// 	CCARRAY_FOREACH(this->pGameLayer->greenArray,it)
+// 	CCARRAY_FOREACH(pGameLayer->yellow_wall,it)
 // 	{
 // 		CCSprite * pWellSprite = dynamic_cast<CCSprite*>(it);
 // 		CCRect wellRect = CCRectMake(pWellSprite->getPositionX()-pWellSprite->getContentSize().width/2,
 // 			pWellSprite->getPositionY()-pWellSprite->getContentSize().height/2,
 // 			pWellSprite->getContentSize().width,pWellSprite->getContentSize().height);
 // 
-// 		CCRect LeadRect = CCRectMake(m_pLead->getPositionX()-2.5f,m_pLead->getPositionY()-2.5f,5,5);
+// 		//CCRect LeadRect = CCRectMake(m_pLead->getPositionX()-2.5f,m_pLead->getPositionY()-2.5f,5,5);
 // 
-// 		if (LeadRect.intersectsRect(wellRect))
+// 		if (leadRect.intersectsRect(wellRect))
 // 		{
-// 			m_pLead->stopAction(m_pMove);
-// 			this->unschedule(schedule_selector(CCButtonLayer::update));
+// 			//碰撞成功
+// 			return pGameLayer->yellow_wall;
 // 		}
 // 
 // 	}
+	list<CCPoint>::iterator iter;
+	for (iter = yellow_wall.begin();iter!=yellow_wall.end();iter++)
+	{
+		//list<CCPoint>::iterator iter = yellow_wall.begin()+i;
+		CCPoint temp = *iter;
+		CCRect wellRect = CCRectMake(temp.x-5,temp.y-5,10,10); 
+		if (leadRect.intersectsRect(wellRect))
+		{
+			//return NULL;
+		}
+
+	}
+
+	//return NULL;
 
 }
 
@@ -217,16 +233,24 @@ void CCButtonLayer::MoveHeroBegin(float t)
 	switch(dirTag)
 	{
 	case kUp:
-		this->m_pLead->setPositionY(this->m_pLead->getPositionY()+2);
-		break;
+		{
+			//获取移动后位置
+			CCRect leadRect = CCRectMake(m_pLead->getPositionX()-2.5f,m_pLead->getPositionY()-2.5f+MoveLength,5,5);
+			update(leadRect);
+// 			if (update(leadRect) == NULL)
+// 			{
+// 				this->m_pLead->setPositionY(this->m_pLead->getPositionY()+MoveLength);
+// 			}
+			break;
+		}
 	case kDown:
-		this->m_pLead->setPositionY(this->m_pLead->getPositionY()-2);
+		this->m_pLead->setPositionY(this->m_pLead->getPositionY()-MoveLength);
 		break;
 	case kLeft:
-		this->m_pLead->setPositionX(this->m_pLead->getPositionX()-2);
+		this->m_pLead->setPositionX(this->m_pLead->getPositionX()-MoveLength);
 		break;
 	case kRight:
-		this->m_pLead->setPositionX(this->m_pLead->getPositionX()+2);
+		this->m_pLead->setPositionX(this->m_pLead->getPositionX()+MoveLength);
 		break;
 	default:
 		break;

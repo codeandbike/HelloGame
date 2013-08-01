@@ -17,6 +17,7 @@ public:
 	CCSprite * m_pLead;//Ö÷½Ç
 	CCOperateScene * m_pGameLayer; //ÓÎÏ·²ã
 	CCButtonLayer * m_pButton; //°´Å¥²ã
+	CCLead * m_wall;
 
 
 
