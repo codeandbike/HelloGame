@@ -10,7 +10,7 @@ LOCAL_SRC_FILES := hellocpp/main.cpp \
                    ../../Classes/AppDelegate.cpp \
                    ../../Classes/CButtonLayer.cpp \
                    ../../Classes/CGameScene.cpp \
-                   ../../Classes/CLead.cpp \
+                   ../../Classes/CWell.cpp \
                    ../../Classes/COperateScene.cpp \
                    ../../Classes/HelloWorldScene.cpp
                    

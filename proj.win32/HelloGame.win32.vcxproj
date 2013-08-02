@@ -134,8 +134,8 @@
     <ClInclude Include="..\Classes\AppDelegate.h" />
     <ClInclude Include="..\Classes\CButtonLayer.h" />
     <ClInclude Include="..\Classes\CGameScene.h" />
-    <ClInclude Include="..\Classes\CLead.h" />
     <ClInclude Include="..\Classes\COperateScene.h" />
+    <ClInclude Include="..\Classes\CWell.h" />
     <ClInclude Include="..\Classes\HelloWorldScene.h" />
     <ClInclude Include="main.h" />
     <ClInclude Include="resource.h" />
@@ -144,8 +144,8 @@
     <ClCompile Include="..\Classes\AppDelegate.cpp" />
     <ClCompile Include="..\Classes\CButtonLayer.cpp" />
     <ClCompile Include="..\Classes\CGameScene.cpp" />
-    <ClCompile Include="..\Classes\CLead.cpp" />
     <ClCompile Include="..\Classes\COperateScene.cpp" />
+    <ClCompile Include="..\Classes\CWell.cpp" />
     <ClCompile Include="..\Classes\HelloWorldScene.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>

@@ -30,9 +30,9 @@ bool CCGameScene::init() //初始化函数
 // 		this->m_pGameLayer = CCOperateScene::create();
 // 		CC_BREAK_IF(!m_pGameLayer);
 // 		this->addChild(m_pGameLayer);
-		int yellowArr[5][2] = {{1,0},{2,0},{3,0},{4,0},{5,0}};
-		this->m_wall = CCLead::create("yellow.png",yellowArr,5);
-		this->addChild(m_wall);
+ 		int yellowArr[5][2] = {{1,0},{2,0},{3,0},{4,0},{5,0}};
+// 		this->m_wall = CCLead::create("yellow.png",yellowArr,5);
+// 		this->addChild(m_wall);
 		
 
 		//添加主角

@@ -4,11 +4,18 @@
 CCButtonLayer::CCButtonLayer(void)
 {
 	m_pMove = NULL;
+	m_pWell = NULL;
+	arrWell = new CCArray;
 }
 
 
 CCButtonLayer::~CCButtonLayer(void)
 {
+	if (arrWell !=NULL)
+	{
+		arrWell->release();
+		arrWell = NULL;
+	}
 }
 
 bool CCButtonLayer::init()
@@ -70,6 +77,10 @@ bool CCButtonLayer::init()
 		pButtonRight->addTargetWithActionForControlEvents(this,cccontrol_selector(CCButtonLayer::touchDragInsideRight2),CCControlEventTouchUpInside);
 		pButtonRight->addTargetWithActionForControlEvents(this,cccontrol_selector(CCButtonLayer::touchDragInsideUp2),CCControlEventTouchUpOutside);
 		this->addChild(pButtonRight);
+
+
+
+
 
 
 		sRet = true;
@@ -185,25 +196,9 @@ void CCButtonLayer::touchDragInsideRight2(CCObject* pSender, CCControlEvent even
 }
 
 
-void CCButtonLayer::update(CCRect leadRect) //检测碰撞
+bool CCButtonLayer::update(CCRect leadRect) //检测碰撞
 {
-// 	CCObject* it;
-// 	CCARRAY_FOREACH(pGameLayer->yellow_wall,it)
-// 	{
-// 		CCSprite * pWellSprite = dynamic_cast<CCSprite*>(it);
-// 		CCRect wellRect = CCRectMake(pWellSprite->getPositionX()-pWellSprite->getContentSize().width/2,
-// 			pWellSprite->getPositionY()-pWellSprite->getContentSize().height/2,
-// 			pWellSprite->getContentSize().width,pWellSprite->getContentSize().height);
-// 
-// 		//CCRect LeadRect = CCRectMake(m_pLead->getPositionX()-2.5f,m_pLead->getPositionY()-2.5f,5,5);
-// 
-// 		if (leadRect.intersectsRect(wellRect))
-// 		{
-// 			//碰撞成功
-// 			return pGameLayer->yellow_wall;
-// 		}
-// 
-// 	}
+
 	list<CCPoint>::iterator iter;
 	for (iter = yellow_wall.begin();iter!=yellow_wall.end();iter++)
 	{
@@ -212,12 +207,13 @@ void CCButtonLayer::update(CCRect leadRect) //检测碰撞
 		CCRect wellRect = CCRectMake(temp.x-5,temp.y-5,10,10); 
 		if (leadRect.intersectsRect(wellRect))
 		{
-			//return NULL;
+			m_pTagWell = kyellow;
+			return false;
 		}
 
 	}
 
-	//return NULL;
+	return true;
 
 }
 
@@ -229,28 +225,67 @@ void CCButtonLayer::MoveHeroBegin(float t)
 
 	//检查碰撞
 
+
 	//移动方块
+	CCRect leadRect;
 	switch(dirTag)
 	{
+	
 	case kUp:
 		{
 			//获取移动后位置
-			CCRect leadRect = CCRectMake(m_pLead->getPositionX()-2.5f,m_pLead->getPositionY()-2.5f+MoveLength,5,5);
-			update(leadRect);
-// 			if (update(leadRect) == NULL)
-// 			{
-// 				this->m_pLead->setPositionY(this->m_pLead->getPositionY()+MoveLength);
-// 			}
+			leadRect = CCRectMake(m_pLead->getPositionX()-2.5f,m_pLead->getPositionY()-2.5f+MoveLength,5,5);
+			if (update(leadRect))
+			{
+				this->m_pLead->setPositionY(this->m_pLead->getPositionY()+MoveLength);
+			}else
+			{
+
+				MoveHeroEnd();
+			}
 			break;
 		}
 	case kDown:
-		this->m_pLead->setPositionY(this->m_pLead->getPositionY()-MoveLength);
+		//获取移动后位置
+		leadRect = CCRectMake(m_pLead->getPositionX()-2.5f,m_pLead->getPositionY()-2.5f-MoveLength,5,5);
+		if (update(leadRect))
+		{
+			this->m_pLead->setPositionY(this->m_pLead->getPositionY()-MoveLength);
+		}
+		else
+		{
+			
+			MoveHeroEnd();
+		}
+		
 		break;
 	case kLeft:
-		this->m_pLead->setPositionX(this->m_pLead->getPositionX()-MoveLength);
+		//获取移动后位置
+		leadRect = CCRectMake(m_pLead->getPositionX()-2.5f-MoveLength,m_pLead->getPositionY()-2.5f,5,5);
+		if (update(leadRect))
+		{
+			this->m_pLead->setPositionX(this->m_pLead->getPositionX()-MoveLength);
+		}
+		else
+		{
+
+			MoveHeroEnd();
+		}
+		
 		break;
 	case kRight:
-		this->m_pLead->setPositionX(this->m_pLead->getPositionX()+MoveLength);
+		//获取移动后位置
+		leadRect = CCRectMake(m_pLead->getPositionX()-2.5f+MoveLength,m_pLead->getPositionY()-2.5f,5,5);
+		if (update(leadRect))
+		{
+			this->m_pLead->setPositionX(this->m_pLead->getPositionX()+MoveLength);
+		}
+		else
+		{
+
+			MoveHeroEnd();
+		}
+	
 		break;
 	default:
 		break;
@@ -260,7 +295,42 @@ void CCButtonLayer::MoveHeroBegin(float t)
 /************************************************************************/
 /* 精灵移动 停止                                                                     */
 /************************************************************************/
-void CCButtonLayer::MoveHeroEnd(CCNode * sender)
+void CCButtonLayer::MoveHeroEnd()
 {
-	//精灵移动停止后操作
+// 	CCWell * yellow_Sprite = CCWell::create("yellow.png",yellow_wall);
+// 	this->addChild(yellow_Sprite);
+// 
+// 	CCFadeOut* fadeOut = CCFadeOut::create(0.2f);
+// 	CCCallFuncN *callN = CCCallFuncN::create(this,callfuncN_selector(CCButtonLayer::callNodeBack));
+// 	CCFiniteTimeAction * seq = CCSequence::create(fadeOut,callN,NULL);
+// 	yellow_Sprite->runAction(seq);
+
+	switch(m_pTagWell)
+	{
+	case kyellow:
+		{
+			CCWell * yellow_Sprite = CCWell::create("yellow.png",yellow_wall);
+			this->addChild(yellow_Sprite);
+
+			CCFadeOut* fadeOut = CCFadeOut::create(0.2f);
+			CCCallFuncN *callN = CCCallFuncN::create(this,callfuncN_selector(CCButtonLayer::callNodeBack));
+			CCFiniteTimeAction * seq = CCSequence::create(fadeOut,callN,NULL);
+			yellow_Sprite->runAction(seq);
+		}
+		break;
+	default:
+		break;
+	}
+
+
+}
+
+
+/************************************************************************/
+/* 墙体消失                                                                     */
+/************************************************************************/
+void CCButtonLayer::callNodeBack(CCNode *sender)
+{
+	CCWell * sprite = (CCWell *)sender;
+	this->removeChild(sprite);
 }

@@ -2,7 +2,6 @@
 #define __GAME_SCENE_H__
 
 #include "cocos2d.h"
-#include "CLead.h"
 #include "COperateScene.h"
 #include "CButtonLayer.h"
 #include "SimpleAudioEngine.h"
@@ -17,7 +16,6 @@ public:
 	CCSprite * m_pLead;//Ö÷½Ç
 	CCOperateScene * m_pGameLayer; //ÓÎÏ·²ã
 	CCButtonLayer * m_pButton; //°´Å¥²ã
-	CCLead * m_wall;
 
 
 

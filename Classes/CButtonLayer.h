@@ -6,6 +6,8 @@
 #include "cocos-ext.h" 
 #include "COperateScene.h"
 #include <list>
+#include "CWell.h"
+
 
 using namespace cocos2d;
 USING_NS_CC_EXT;  
@@ -20,6 +22,7 @@ public:
 	cocos2d::CCMoveBy *m_pMove;
 	CCOperateScene * pGameLayer;
 	int dirTag; //移动方向
+	int m_pTagWell; //触碰到墙体
 	static const int MoveLength = 2; //移动量
 	enum direction{
 		kUp,
@@ -28,8 +31,16 @@ public:
 		kRight
 	};
 
-	//int yellow_arr[][2];
+	enum m_pEnumWell{
+		kyellow,
+		kred,
+		kgreen,
+		kblue
+	};
 
+
+	CCWell * m_pWell;
+	CCArray * arrWell;
 	list<CCPoint> yellow_wall;
 public:
 	virtual bool init();
@@ -46,7 +57,7 @@ public:
 	void touchDragInsideLeft2(CCObject* pSender, CCControlEvent event);	
 	void touchDragInsideRight2(CCObject* pSender, CCControlEvent event);
 
-	void update(CCRect leadRect); //检测碰撞
+	bool update(CCRect leadRect); //检测碰撞
 
 	/************************************************************************/
 	/* 精灵移动 开始                                                                    */
@@ -55,8 +66,11 @@ public:
 	/************************************************************************/
 	/* 精灵移动 停止                                                                     */
 	/************************************************************************/
-	void MoveHeroEnd(CCNode * sender);
-
+	void MoveHeroEnd();
+	/************************************************************************/
+	/* 墙体消失                                                                     */
+	/************************************************************************/
+	void callNodeBack(CCNode *sender);
 
 };
 

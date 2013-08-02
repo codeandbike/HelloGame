@@ -52,10 +52,10 @@
     <ClInclude Include="..\Classes\CGameScene.h">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="..\Classes\CLead.h">
+    <ClInclude Include="..\Classes\COperateScene.h">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="..\Classes\COperateScene.h">
+    <ClInclude Include="..\Classes\CWell.h">
       <Filter>include</Filter>
     </ClInclude>
   </ItemGroup>
@@ -75,10 +75,10 @@
     <ClCompile Include="..\Classes\CGameScene.cpp">
       <Filter>source</Filter>
     </ClCompile>
-    <ClCompile Include="..\Classes\CLead.cpp">
+    <ClCompile Include="..\Classes\COperateScene.cpp">
       <Filter>source</Filter>
     </ClCompile>
-    <ClCompile Include="..\Classes\COperateScene.cpp">
+    <ClCompile Include="..\Classes\CWell.cpp">
       <Filter>source</Filter>
     </ClCompile>
   </ItemGroup>
