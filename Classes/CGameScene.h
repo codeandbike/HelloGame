@@ -6,6 +6,7 @@
 #include "CButtonLayer.h"
 #include "SimpleAudioEngine.h"
 using namespace cocos2d;
+using namespace std;
 class CCGameScene : cocos2d::CCLayer
 {
 public:
@@ -18,6 +19,9 @@ public:
 	CCButtonLayer * m_pButton; //按钮层
 
 
+	
+
+
 
 public:
 	virtual bool init(); //初始化函数
@@ -27,6 +31,11 @@ public:
 	CREATE_FUNC(CCGameScene);
 
     void menuCloseCallback(CCObject* pSender);//退出菜单回调函数
+
+	/************************************************************************/
+	/* 初始化墙体集合                                                                     */
+	/************************************************************************/
+	list<CCPoint> initList(int arr[][2],int n);
 };
 
 #endif

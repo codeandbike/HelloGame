@@ -39,9 +39,20 @@ public:
 	};
 
 
+
 	CCWell * m_pWell;
 	CCArray * arrWell;
-	list<CCPoint> yellow_wall;
+
+	struct struct_wall
+	{
+		list<CCPoint> yellow_wall;
+		list<CCPoint> red_wall;
+		list<CCPoint> green_wall;
+		list<CCPoint> blue_wall;
+	};
+
+	struct_wall scene1_wall;
+
 public:
 	virtual bool init();
 	static CCButtonLayer * create();
@@ -71,6 +82,8 @@ public:
 	/* Ç½ÌåÏûÊ§                                                                     */
 	/************************************************************************/
 	void callNodeBack(CCNode *sender);
+
+	list<CCPoint> initList(int arr[][2],int n);
 
 };
 

@@ -3,9 +3,23 @@
 
 CCButtonLayer::CCButtonLayer(void)
 {
+
 	m_pMove = NULL;
 	m_pWell = NULL;
 	arrWell = new CCArray;
+	//初始化障碍物结构体
+	//数组取值范围[0][0] -> [27][32]
+	int yellowArr[5][2] = {{1,0},{2,0},{3,0},{4,0},{5,0}};
+	int redArr[5][2] = {{1,4},{2,4},{3,4},{4,4},{5,4}};
+	int greenArr[5][2] = {{1,8},{2,8},{3,8},{4,8},{5,8}};
+	int blueArr[5][2] = {{1,12},{2,12},{3,12},{4,12},{5,12}};
+	
+	scene1_wall.yellow_wall = initList(yellowArr,5);
+	scene1_wall.red_wall = initList(redArr,5);
+	scene1_wall.green_wall = initList(greenArr,5);
+	scene1_wall.blue_wall = initList(blueArr,5);
+	
+
 }
 
 
@@ -117,7 +131,7 @@ void CCButtonLayer::touchDragInsideUp(CCObject* pSender, CCControlEvent event)
 // 	this->m_pLead->runAction(m_pMove);
 	
 	dirTag = kUp;
-	this->schedule(schedule_selector(CCButtonLayer::MoveHeroBegin),0.01f);
+	this->schedule(schedule_selector(CCButtonLayer::MoveHeroBegin),0.005f);
 
 
 }
@@ -133,7 +147,7 @@ void CCButtonLayer::touchDragInsideDown(CCObject* pSender, CCControlEvent event)
 // 	this->m_pLead->runAction(m_pMove);
 
 	dirTag = kDown;
-	this->schedule(schedule_selector(CCButtonLayer::MoveHeroBegin),0.01f);
+	this->schedule(schedule_selector(CCButtonLayer::MoveHeroBegin),0.005f);
 	
 }
 void CCButtonLayer::touchDragInsideLeft(CCObject* pSender, CCControlEvent event)
@@ -147,7 +161,7 @@ void CCButtonLayer::touchDragInsideLeft(CCObject* pSender, CCControlEvent event)
 // 
 // 	this->m_pLead->runAction(m_pMove);
 	dirTag = kLeft;
-	this->schedule(schedule_selector(CCButtonLayer::MoveHeroBegin),0.01f);
+	this->schedule(schedule_selector(CCButtonLayer::MoveHeroBegin),0.005f);
 
 
 }
@@ -162,7 +176,7 @@ void CCButtonLayer::touchDragInsideRight(CCObject* pSender, CCControlEvent event
 // 
 // 	this->m_pLead->runAction(m_pMove);
 	dirTag = kRight;
-	this->schedule(schedule_selector(CCButtonLayer::MoveHeroBegin),0.01f);
+	this->schedule(schedule_selector(CCButtonLayer::MoveHeroBegin),0.005f);
 	
 }
 
@@ -196,11 +210,12 @@ void CCButtonLayer::touchDragInsideRight2(CCObject* pSender, CCControlEvent even
 }
 
 
-bool CCButtonLayer::update(CCRect leadRect) //检测碰撞
+bool CCButtonLayer::update(CCRect leadRect ) //检测碰撞
 {
-
+	struct_wall scene_wall = scene1_wall;
 	list<CCPoint>::iterator iter;
-	for (iter = yellow_wall.begin();iter!=yellow_wall.end();iter++)
+	//判断是否撞上黄色墙体
+	for (iter = scene_wall.yellow_wall.begin();iter!=scene_wall.yellow_wall.end();iter++)
 	{
 		//list<CCPoint>::iterator iter = yellow_wall.begin()+i;
 		CCPoint temp = *iter;
@@ -212,13 +227,56 @@ bool CCButtonLayer::update(CCRect leadRect) //检测碰撞
 		}
 
 	}
+	//判断是否撞上红色墙体
+	for (iter = scene_wall.red_wall.begin();iter!=scene_wall.red_wall.end();iter++)
+	{
+		//list<CCPoint>::iterator iter = yellow_wall.begin()+i;
+		CCPoint temp = *iter;
+		CCRect wellRect = CCRectMake(temp.x-5,temp.y-5,10,10); 
+		if (leadRect.intersectsRect(wellRect))
+		{
+			m_pTagWell = kred;
+			return false;
+		}
+
+	}
+
+	//判断是否撞上绿色墙体
+	for (iter = scene_wall.green_wall.begin();iter!=scene_wall.green_wall.end();iter++)
+	{
+		//list<CCPoint>::iterator iter = yellow_wall.begin()+i;
+		CCPoint temp = *iter;
+		CCRect wellRect = CCRectMake(temp.x-5,temp.y-5,10,10); 
+		if (leadRect.intersectsRect(wellRect))
+		{
+			m_pTagWell = kgreen;
+			return false;
+		}
+
+	}
+
+	//判断是否撞上蓝色墙体
+	for (iter = scene_wall.blue_wall.begin();iter!=scene_wall.blue_wall.end();iter++)
+	{
+		//list<CCPoint>::iterator iter = yellow_wall.begin()+i;
+		CCPoint temp = *iter;
+		CCRect wellRect = CCRectMake(temp.x-5,temp.y-5,10,10); 
+		if (leadRect.intersectsRect(wellRect))
+		{
+			m_pTagWell = kblue;
+			return false;
+		}
+
+	}
+
+
 
 	return true;
 
 }
 
 /************************************************************************/
-/* 精灵移动 开始                                                                    */
+/* 精灵移动 开始                                                          */
 /************************************************************************/
 void CCButtonLayer::MoveHeroBegin(float t)
 {
@@ -305,11 +363,13 @@ void CCButtonLayer::MoveHeroEnd()
 // 	CCFiniteTimeAction * seq = CCSequence::create(fadeOut,callN,NULL);
 // 	yellow_Sprite->runAction(seq);
 
+	struct_wall scene_wall = scene1_wall;
+
 	switch(m_pTagWell)
 	{
 	case kyellow:
 		{
-			CCWell * yellow_Sprite = CCWell::create("yellow.png",yellow_wall);
+			CCWell * yellow_Sprite = CCWell::create("yellow.png",scene_wall.yellow_wall);
 			this->addChild(yellow_Sprite);
 
 			CCFadeOut* fadeOut = CCFadeOut::create(0.2f);
@@ -318,6 +378,41 @@ void CCButtonLayer::MoveHeroEnd()
 			yellow_Sprite->runAction(seq);
 		}
 		break;
+
+	case kred:
+		{
+			CCWell * red_Sprite = CCWell::create("red.png",scene_wall.red_wall);
+			this->addChild(red_Sprite);
+
+			CCFadeOut* fadeOut = CCFadeOut::create(0.2f);
+			CCCallFuncN *callN = CCCallFuncN::create(this,callfuncN_selector(CCButtonLayer::callNodeBack));
+			CCFiniteTimeAction * seq = CCSequence::create(fadeOut,callN,NULL);
+			red_Sprite->runAction(seq);
+		}
+		break;
+	case kgreen:
+		{
+			CCWell * green_Sprite = CCWell::create("green.png",scene_wall.green_wall);
+			this->addChild(green_Sprite);
+
+			CCFadeOut* fadeOut = CCFadeOut::create(0.2f);
+			CCCallFuncN *callN = CCCallFuncN::create(this,callfuncN_selector(CCButtonLayer::callNodeBack));
+			CCFiniteTimeAction * seq = CCSequence::create(fadeOut,callN,NULL);
+			green_Sprite->runAction(seq);
+		}
+		break;
+	case kblue:
+		{
+			CCWell * blue_Sprite = CCWell::create("blue.png",scene_wall.blue_wall);
+			this->addChild(blue_Sprite);
+
+			CCFadeOut* fadeOut = CCFadeOut::create(0.2f);
+			CCCallFuncN *callN = CCCallFuncN::create(this,callfuncN_selector(CCButtonLayer::callNodeBack));
+			CCFiniteTimeAction * seq = CCSequence::create(fadeOut,callN,NULL);
+			blue_Sprite->runAction(seq);
+		}
+		break;
+
 	default:
 		break;
 	}
@@ -333,4 +428,19 @@ void CCButtonLayer::callNodeBack(CCNode *sender)
 {
 	CCWell * sprite = (CCWell *)sender;
 	this->removeChild(sprite);
+}
+
+
+
+list<CCPoint> CCButtonLayer::initList(int arr[][2],int n)
+{
+	list<CCPoint> temp;
+	for (int i=0; i<n;i++)
+	{
+		int k = arr[i][0];
+		int j = arr[i][1];
+		temp.push_back(ccp((k*10)+5,(j*10)+150+5));
+	}
+	return temp;
+
 }
