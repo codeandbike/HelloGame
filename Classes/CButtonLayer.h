@@ -23,7 +23,8 @@ public:
 	CCOperateScene * pGameLayer;
 	int dirTag; //移动方向
 	int m_pTagWell; //触碰到墙体
-	static const int MoveLength = 2; //移动量
+	float MoveLength; //移动量
+	bool b_ButtonDown; //是否有按钮按下
 	enum direction{
 		kUp,
 		kDown,

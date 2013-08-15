@@ -3,18 +3,20 @@
 
 CCButtonLayer::CCButtonLayer(void)
 {
-
+	b_ButtonDown = false;
 	m_pMove = NULL;
 	m_pWell = NULL;
 	arrWell = new CCArray;
+
+	MoveLength = CCDirector::sharedDirector()->getWinSize().width*(8/480);
 	//初始化障碍物结构体
 	//数组取值范围[0][0] -> [27][32]
-	int yellowArr[5][2] = {{1,0},{2,0},{3,0},{4,0},{5,0}};
+	int yellowArr[118][2] = {{0,0},{0,1},{0,2},{0,3},{0,4},{0,5},{0,6},{0,7},{0,8},{0,9},{0,10},{0,11},{0,12},{0,13},{0,14},{0,15},{0,16},{0,17},{0,18},{0,19},{0,20},{0,21},{0,22},{0,23},{0,24},{0,25},{0,26},{0,27},{0,28},{0,29},{0,30},{0,31},{0,32},{27,0},{27,1},{27,2},{27,3},{27,4},{27,5},{27,6},{27,7},{27,8},{27,9},{27,10},{27,11},{27,12},{27,13},{27,14},{27,15},{27,16},{27,17},{27,18},{27,19},{27,20},{27,21},{27,22},{27,23},{27,24},{27,25},{27,26},{27,27},{27,28},{27,29},{27,30},{27,31},{27,32},{1,0},{2,0},{3,0},{4,0},{5,0},{6,0},{7,0},{8,0},{9,0},{10,0},{11,0},{12,0},{13,0},{14,0},{15,0},{16,0},{17,0},{18,0},{19,0},{20,0},{21,0},{22,0},{23,0},{24,0},{25,0},{26,0},{1,32},{2,32},{3,32},{4,32},{5,32},{6,32},{7,32},{8,32},{9,32},{10,32},{11,32},{12,32},{13,32},{14,32},{15,32},{16,32},{17,32},{18,32},{19,32},{20,32},{21,32},{22,32},{23,32},{24,32},{25,32},{26,32}};
 	int redArr[5][2] = {{1,4},{2,4},{3,4},{4,4},{5,4}};
 	int greenArr[5][2] = {{1,8},{2,8},{3,8},{4,8},{5,8}};
 	int blueArr[5][2] = {{1,12},{2,12},{3,12},{4,12},{5,12}};
 	
-	scene1_wall.yellow_wall = initList(yellowArr,5);
+	scene1_wall.yellow_wall = initList(yellowArr,118);
 	scene1_wall.red_wall = initList(redArr,5);
 	scene1_wall.green_wall = initList(greenArr,5);
 	scene1_wall.blue_wall = initList(blueArr,5);
@@ -129,9 +131,14 @@ void CCButtonLayer::touchDragInsideUp(CCObject* pSender, CCControlEvent event)
 // 	this->m_pMove = CCMoveBy::create(time,ccp(0,y));
 // 
 // 	this->m_pLead->runAction(m_pMove);
+	if (!b_ButtonDown)
+	{	
+		dirTag = kUp;
+		this->schedule(schedule_selector(CCButtonLayer::MoveHeroBegin),0.005f);
+		b_ButtonDown = true;
+	}
 	
-	dirTag = kUp;
-	this->schedule(schedule_selector(CCButtonLayer::MoveHeroBegin),0.005f);
+
 
 
 }
@@ -145,9 +152,13 @@ void CCButtonLayer::touchDragInsideDown(CCObject* pSender, CCControlEvent event)
 // 	this->m_pMove = CCMoveBy::create(time,ccp(0,0-y));
 // 
 // 	this->m_pLead->runAction(m_pMove);
+	if (!b_ButtonDown)
+	{
+		dirTag = kDown;
+		this->schedule(schedule_selector(CCButtonLayer::MoveHeroBegin),0.005f);
+		b_ButtonDown = true;
+	}
 
-	dirTag = kDown;
-	this->schedule(schedule_selector(CCButtonLayer::MoveHeroBegin),0.005f);
 	
 }
 void CCButtonLayer::touchDragInsideLeft(CCObject* pSender, CCControlEvent event)
@@ -160,8 +171,13 @@ void CCButtonLayer::touchDragInsideLeft(CCObject* pSender, CCControlEvent event)
 // 	this->m_pMove = CCMoveBy::create(time,ccp(0-x,0));
 // 
 // 	this->m_pLead->runAction(m_pMove);
-	dirTag = kLeft;
-	this->schedule(schedule_selector(CCButtonLayer::MoveHeroBegin),0.005f);
+	if (!b_ButtonDown)
+	{
+		b_ButtonDown = true;
+		dirTag = kLeft;
+		this->schedule(schedule_selector(CCButtonLayer::MoveHeroBegin),0.005f);
+	}
+
 
 
 }
@@ -175,8 +191,13 @@ void CCButtonLayer::touchDragInsideRight(CCObject* pSender, CCControlEvent event
 // 	this->m_pMove = CCMoveBy::create(time,ccp(x,0));
 // 
 // 	this->m_pLead->runAction(m_pMove);
-	dirTag = kRight;
-	this->schedule(schedule_selector(CCButtonLayer::MoveHeroBegin),0.005f);
+	if (!b_ButtonDown)
+	{
+		dirTag = kRight;
+		this->schedule(schedule_selector(CCButtonLayer::MoveHeroBegin),0.005f);
+		b_ButtonDown=true;
+	}
+
 	
 }
 
@@ -185,8 +206,12 @@ void CCButtonLayer::touchDragInsideUp2(CCObject* pSender, CCControlEvent event)
 {
 // 	this->m_pLead->stopAction(this->m_pMove);
 // 	this->unschedule(schedule_selector(CCButtonLayer::update));
+	if (dirTag == kUp)
+	{
+		this->unschedule(schedule_selector(CCButtonLayer::MoveHeroBegin));
+		b_ButtonDown = false;
+	}
 
-	this->unschedule(schedule_selector(CCButtonLayer::MoveHeroBegin));
 
 }
 void CCButtonLayer::touchDragInsideDown2(CCObject* pSender, CCControlEvent event)
@@ -194,19 +219,34 @@ void CCButtonLayer::touchDragInsideDown2(CCObject* pSender, CCControlEvent event
 
 // 	this->m_pLead->stopAction(this->m_pMove);
 // 	this->unschedule(schedule_selector(CCButtonLayer::update));
-	this->unschedule(schedule_selector(CCButtonLayer::MoveHeroBegin));
+	if (dirTag == kDown)
+	{
+		this->unschedule(schedule_selector(CCButtonLayer::MoveHeroBegin));
+		b_ButtonDown = false;
+	}
+
 }
 void CCButtonLayer::touchDragInsideLeft2(CCObject* pSender, CCControlEvent event)
 {
 // 	this->m_pLead->stopAction(this->m_pMove);
 // 	this->unschedule(schedule_selector(CCButtonLayer::update));
-	this->unschedule(schedule_selector(CCButtonLayer::MoveHeroBegin));
+	if (dirTag == kLeft)
+	{
+		this->unschedule(schedule_selector(CCButtonLayer::MoveHeroBegin));
+		b_ButtonDown = false;
+	}
+
 }
 void CCButtonLayer::touchDragInsideRight2(CCObject* pSender, CCControlEvent event)
 {
 // 	this->m_pLead->stopAction(this->m_pMove);
 // 	this->unschedule(schedule_selector(CCButtonLayer::update));
-	this->unschedule(schedule_selector(CCButtonLayer::MoveHeroBegin));
+	if (dirTag == kRight)
+	{
+		this->unschedule(schedule_selector(CCButtonLayer::MoveHeroBegin));
+		b_ButtonDown = false;
+	}
+
 }
 
 
@@ -269,6 +309,13 @@ bool CCButtonLayer::update(CCRect leadRect ) //检测碰撞
 
 	}
 
+	//判断是否出界
+
+// 	CCSize winSize = CCDirector::sharedDirector()->getWinSize();
+// 	if (leadRect.getMaxX()>winSize.width && leadRect.getMaxY() > winSize.height && leadRect.getMinX()<0 && leadRect.getMinY()<0)
+// 	{
+// 		return false;
+// 	}
 
 
 	return true;
@@ -298,7 +345,6 @@ void CCButtonLayer::MoveHeroBegin(float t)
 				this->m_pLead->setPositionY(this->m_pLead->getPositionY()+MoveLength);
 			}else
 			{
-
 				MoveHeroEnd();
 			}
 			break;
@@ -326,7 +372,6 @@ void CCButtonLayer::MoveHeroBegin(float t)
 		}
 		else
 		{
-
 			MoveHeroEnd();
 		}
 		
